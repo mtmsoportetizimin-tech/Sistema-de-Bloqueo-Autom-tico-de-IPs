@@ -1,6 +1,3 @@
-# Sistema-de-Bloqueo-Autom-tico-de-IPs
-Este proyecto implementa un sistema automatizado de monitoreo, detección y bloqueo continuo de direcciones IP sospechosas en Linux. El script analiza tráfico en tiempo real, identifica IPs no deseadas y aplica reglas de firewall automáticamente.  Ideal para laboratorios, pruebas de ciberseguridad y automatización
-
 🛠 1. Requisitos
 
 Antes de ejecutar el script asegúrate de tener instalado:
@@ -158,16 +155,3 @@ sudo iptables -L INPUT -n | grep DROP
 
 Prueba 3 — Ver monitoreo:
 tail -f lista_bloqueo.txt
-
-📌 10. Notas importantes
-
-El script usa iptables (perfecto para Linux Mint).
-
-Las reglas desaparecen al reiniciar a menos que se guarden.
-
-Si deseas persistencia:
-
-sudo iptables-save > /etc/iptables/rules.v4
-
-
-Puedes añadir IPs manualmente a lista_bloqueo.txt.
