@@ -81,45 +81,6 @@ Detener:
 
 sudo kill -9 <PID>
 
-🧩 Script completo
-
-Cópialo en bloqueo_continuo.sh:
-
-#!/bin/bash
-
-# ----------------------------------------------
-#  BLOQUEO AUTOMÁTICO Y CONTINUO DE DIRECCIONES IP
-# ----------------------------------------------
-
-IFACE="$1"
-LOG="lista_bloqueo.txt"
-
-if [ -z "$IFACE" ]; then
-    echo "Uso: $0 <interfaz>"
-    exit 1
-fi
-
-touch "$LOG"
-echo "Monitoreando tráfico en la interfaz: $IFACE"
-echo "Registro de IPs bloqueadas: $LOG"
-
-while true; do
-    IP_LIST=$(tcpdump -i "$IFACE" -n -c 200 2>/dev/null \
-              | grep -oE 'IP [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' \
-              | awk '{print $2}' \
-              | sort -u)
-
-    for IP in $IP_LIST; do
-        if ! grep -Fxq "$IP" "$LOG"; then
-            echo "$IP" >> "$LOG"
-            iptables -A INPUT -s "$IP" -j DROP
-            echo "IP bloqueada: $IP"
-        fi
-    done
-
-    sleep 3
-done
-
 🛠 Guardar reglas después de reiniciar (opcional)
 sudo apt install -y iptables-persistent
 sudo netfilter-persistent save
