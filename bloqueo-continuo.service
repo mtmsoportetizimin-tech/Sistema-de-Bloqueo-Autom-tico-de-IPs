@@ -1,0 +1,16 @@
+[Unit]
+Description=Bloqueo continuo de IPs (auto-firewall)
+After=network.target
+
+[Service]
+Type=simple
+# Ejecutar el script desde el directorio del repositorio
+WorkingDirectory=/home/mtmsoportetizimin-tech/Sistema-de-Bloqueo-Autom-tico-de-IPs
+ExecStart=/usr/bin/env bash ./bloqueo_continuo.sh
+Restart=on-failure
+RestartSec=5
+# Ejecutar como root para ipset/iptables/tcpdump
+User=root
+
+[Install]
+WantedBy=multi-user.target

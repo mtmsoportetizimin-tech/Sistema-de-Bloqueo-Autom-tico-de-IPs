@@ -1,94 +1,69 @@
-🚧 Firewall Automático de Bloqueo de IPs
+# README actualizado - Sistema de Bloqueo Automático de IPs
 
-Monitoreo continuo + Detección + Bloqueo con iptables
+Proyecto mejorado: ahora utiliza ipset para gestionar bloqueos a gran escala, incluye archivo de configuración, whitelist y una unidad systemd para ejecución como servicio.
 
-Este proyecto implementa un sistema de detección y bloqueo automático de direcciones IP en Linux mediante análisis continuo de tráfico en tiempo real.
+Requisitos
+---------
 
-Funciona en: Linux Mint, Ubuntu, Debian, Kali Linux, y derivados.
+- Sistema Linux con ipset, iptables, tcpdump, iproute2
+- (Opcional) ipcalc para soporte avanzado de whitelist CIDR
 
-📦 Requisitos
+Instalación (ejemplo en Debian/Ubuntu)
+-------------------------------------
 
-Instalar dependencias necesarias:
-
+```bash
 sudo apt update
-sudo apt install -y tcpdump iptables net-tools
+sudo apt install -y ipset iptables tcpdump iproute2 ipcalc
+```
 
+Configurar e iniciar
+--------------------
 
-Permisos:
+1. Copia el archivo de configuración ejemplo y edítalo:
 
-Usuario con sudo
+```bash
+cp config.ini.example config.ini
+# editar config.ini: INTERFACE, BAN_TIMEOUT, etc.
+```
 
-Acceso a la interfaz de red a monitorear
+2. (Opcional) ajusta whitelist.txt para añadir direcciones internas o evitadas.
 
-📁 Estructura del proyecto
-auto-firewall/
-│
-├── bloqueo_continuo.sh   # Script principal
-├── lista_bloqueo.txt     # IPs bloqueadas
-└── README.md             # Documentación
+3. Da permisos ejecutables y prueba manualmente:
 
-⚙️ Instalación
-
-Clona el repositorio:
-
-git clone https://github.com/usuario/auto-firewall.git
-cd auto-firewall
-
-
-Da permisos:
-
+```bash
 chmod +x bloqueo_continuo.sh
+sudo ./bloqueo_continuo.sh --iface eth0
+```
 
-▶️ Uso
+4. Instalar la unidad systemd (como root):
 
-Ejecuta indicando la interfaz de red:
+```bash
+# copia el servicio a systemd
+sudo cp bloqueo-continuo.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now bloqueo-continuo.service
+sudo systemctl status bloqueo-continuo.service
+```
 
-sudo ./bloqueo_continuo.sh wlx502b73a90122
+Logs
+----
+Los logs se escriben en el directorio especificado por LOG_DIR (por defecto ./logs_escaneos). Hay un ejemplo de configuración de logrotate en logrotate/auto-firewall.
 
+Notas de seguridad
+------------------
+- Ejecuta estos scripts sólo en entornos controlados y de pruebas. Manipulan iptables e ipset y pueden bloquear conectividad.
+- Revisa whitelist.txt para evitar auto-bloqueos de rangos internos.
+- Por defecto BAN_TIMEOUT=86400 (24h). Cámbialo a 0 para hacer bloqueos permanentes.
 
-El programa:
+Restauración
+------------
+Si necesitas eliminar las reglas y el ipset manualmente:
 
-Monitorea tráfico en tiempo real
+```bash
+sudo iptables -D INPUT -m set --match-set auto_firewall_set src -j DROP || true
+sudo ipset destroy auto_firewall_set || true
+```
 
-Detecta IPs nuevas
-
-Bloquea automáticamente con iptables
-
-Guarda IPs en lista_bloqueo.txt
-
-Se ejecuta de forma continua
-
-🔍 Verificar bloqueos
-Reglas aplicadas por iptables:
-sudo iptables -L INPUT -n --line-numbers
-
-Lista de IPs bloqueadas:
-cat lista_bloqueo.txt
-
-🔁 Ejecución en segundo plano
-
-Ejecutar sin cerrar la terminal:
-
-nohup sudo ./bloqueo_continuo.sh wlx502b73a90122 &
-
-
-Ver si está activo:
-
-ps aux | grep bloqueo_continuo
-
-
-Detener:
-
-sudo kill -9 <PID>
-
-🛠 Guardar reglas después de reiniciar (opcional)
-sudo apt install -y iptables-persistent
-sudo netfilter-persistent save
-
-📌 Notas
-
-Puedes añadir IPs manualmente a lista_bloqueo.txt.
-
-Las reglas se añaden solo una vez por IP.
-
-Diseñado para entornos de pruebas y laboratorios de ciberseguridad.
+Contribuciones
+--------------
+Pull requests bienvenidos. Para cambios grandes, crea una rama y abre un PR apuntando a main.

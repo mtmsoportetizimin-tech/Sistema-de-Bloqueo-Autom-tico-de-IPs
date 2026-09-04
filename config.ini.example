@@ -1,0 +1,23 @@
+# Configuración de ejemplo para bloqueo_continuo.sh
+# Copia este archivo a config.ini y modifica según tu entorno.
+
+# INTERFACE: interfaz de red a monitorizar (ej: eth0, wlp3s0). Si está vacío, se intenta auto-detectar.
+INTERFACE=
+
+# Nombre del ipset que contendrá las IPs bloqueadas
+IPSET_NAME=auto_firewall_set
+
+# Tiempo de bloqueo en segundos (0 = permanente)
+BAN_TIMEOUT=86400
+
+# Directorio de logs
+LOG_DIR=./logs_escaneos
+
+# Opciones adicionales para tcpdump, p.ej. "-s 0" o filtros BPF
+TCPDUMP_OPTIONS="-nn --immediate-mode"
+
+# Ruta al archivo whitelist (IPs/CIDR que nunca se bloquearán)
+WHITELIST_PATH=./whitelist.txt
+
+# Si esto es true, al parar el servicio se eliminarán reglas e ipset
+CLEANUP_ON_EXIT=true
