@@ -1,0 +1,7 @@
+# Ignorar archivos de runtime y logs
+logs_escaneos/
+*.log
+*.pid
+nohup.out
+*.swp
+.DS_Store

@@ -1,0 +1,7 @@
+# whitelist.txt
+# Lista de IPs o CIDR que NUNCA serán bloqueadas por el sistema.
+# Un elemento por línea. Las líneas que empiezan con # son comentarios.
+
+127.0.0.1
+192.168.0.0/16
+10.0.0.0/8

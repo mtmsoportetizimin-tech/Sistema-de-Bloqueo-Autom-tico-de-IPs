@@ -1,0 +1,13 @@
+/home/mtmsoportetizimin-tech/Sistema-de-Bloqueo-Autom-tico-de-IPs/logs_escaneos/*.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    create 0640 root root
+    sharedscripts
+    postrotate
+        # No reiniciamos el servicio automáticamente; permitimos el fichero de logs se reabra
+        :
+    endscript
+}
